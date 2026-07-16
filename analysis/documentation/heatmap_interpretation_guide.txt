@@ -1,0 +1,102 @@
+
+================================================================================
+HEATMAP INTERPRETATION GUIDE
+================================================================================
+
+HOW TO READ THE CORRELATION HEATMAPS
+
+1. SPEARMAN HEATMAP (Primary - Red/Blue Diverging)
+   
+   COLOR SCALE:
+   - Dark Red (ρ ≈ +1.0):   Very strong positive correlation
+   - Light Red (ρ ≈ +0.5):  Moderate positive correlation
+   - White (ρ ≈ 0):         No correlation
+   - Light Blue (ρ ≈ -0.5): Moderate negative correlation
+   - Dark Blue (ρ ≈ -1.0):  Very strong negative correlation
+   
+   USE THIS: Most reliable for NHS data (robust to non-normality)
+   
+   KEY PATTERNS:
+   - Red squares: Variables increase together
+     Example: Occupancy ↔ ED Time (both rise during crisis)
+   - Blue squares: Inverse relationships
+     Example: Staffing ↔ Wait Time (more staff = shorter wait)
+   - White squares: Unrelated variables
+     Example: Trust code ↔ Assessment time (no inherent link)
+
+2. PEARSON HEATMAP (Comparison - Red/Blue Diverging)
+   
+   SAME COLOR SCHEME as Spearman
+   
+   COMPARE WITH SPEARMAN:
+   - If colors match: Robust correlation (both methods agree)
+   - If colors differ: Pearson unreliable (non-normality issue)
+   
+   USE THIS: Identify where methods disagree
+
+3. DIFFERENCE HEATMAP (Pearson - Spearman)
+   
+   COLOR SCALE:
+   - Red: Pearson r > Spearman ρ (Pearson inflates)
+   - Blue: Spearman ρ > Pearson r (Spearman inflates)
+   - White: Perfect agreement (|difference| < 0.05)
+   
+   INTERPRETATION:
+   - Large differences (> 0.15): Non-normality affecting Pearson
+   - Small differences (< 0.10): Both methods reliable
+   
+   EXAMPLE:
+   - ED Time ↔ Occupancy: Pearson r = 0.68, Spearman ρ = 0.78
+   - Difference = 0.10 (red cell)
+   - Pearson underestimates due to right-skewed ED time
+
+4. P-VALUE HEATMAP (Yellow to Red)
+   
+   COLOR SCALE:
+   - Dark Red (high values): -log10(p) > 3 (p < 0.001, highly significant)
+   - Orange: -log10(p) = 1.3-3 (p < 0.05, significant)
+   - Yellow/White: -log10(p) < 1.3 (p > 0.05, not significant)
+   
+   USE THIS: Identify which correlations are statistically real
+   
+   KEY INSIGHT:
+   - Even weak correlations can be significant with n=2,000
+   - Look for BOTH strong r AND low p-value
+   - Dark red cells = doubly important (strong + significant)
+
+READING SPECIFIC CELLS:
+
+Example 1: "Staffing ↔ Occupancy"
+   Spearman heatmap: Deep blue (strong negative)
+   P-value heatmap: Dark red (highly significant)
+   
+   INTERPRETATION:
+   "As staffing increases, occupancy decreases strongly (ρ = -0.72, p < 0.001).
+    This relationship is statistically robust and operationally significant."
+
+Example 2: "Hour of Day ↔ ED Time"
+   Spearman heatmap: Light color (weak correlation)
+   P-value heatmap: Orange (significant p < 0.05)
+   
+   INTERPRETATION:
+   "While hour of day shows weak direct correlation with ED time (ρ = 0.15, 
+    p = 0.001), this may be confounded by occupancy. The relationship is 
+    statistically real but weak in isolation."
+
+WHICH HEATMAP TO PRESENT?
+
+✅ BEST: Spearman Heatmap + P-Value Heatmap
+   - Shows relationship strength (Spearman)
+   - Shows statistical confidence (P-values)
+   - Clear, professional, easy to interpret
+
+❌ AVOID: Pearson alone (misleading for non-normal data)
+
+PORTFOLIO PRESENTATION:
+
+"This correlation heatmap uses Spearman's rank-based method, which is robust
+to the non-normal distributions identified in our data quality assessment. 
+The color intensity indicates correlation strength (red=positive, blue=negative,
+white=none). All major relationships shown are highly significant (p < 0.001).
+The accompanying p-value heatmap confirms which correlations are statistically
+real versus potentially random."
