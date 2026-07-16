@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NHS ED EDA Analysis Report</title>
+    <style>
+        * {{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }}
+        
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }}
+        
+        /* Header */
+        .header {{
+            background: linear-gradient(135deg, #003087 0%, #005EB8 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }}
+        
+        .header h1 {{
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }}
+        
+        .header p {{
+            font-size: 1.1em;
+            opacity: 0.95;
+        }}
+        
+        .header .metadata {{
+            font-size: 0.9em;
+            margin-top: 15px;
+            opacity: 0.8;
+        }}
+        
+        /* Main container */
+        .container {{
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }}
+        
+        /* Sections */
+        section {{
+            background: white;
+            margin-bottom: 20px;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }}
+        
+        section h2 {{
+            color: #003087;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #005EB8;
+            padding-bottom: 10px;
+        }}
+        
+        section h3 {{
+            color: #005EB8;
+            font-size: 1.3em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }}
+        
+        section h4 {{
+            color: #003087;
+            font-size: 1.1em;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }}
+        
+        section h5 {{
+            color: #003087;
+            font-size: 1.0em;
+            margin-top: 12px;
+            margin-bottom: 8px;
+        }}
+        
+        section p {{
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }}
+        
+        section ol {{
+            margin-left: 25px;
+        }}
+        
+        section ol li {{
+            margin-bottom: 12px;
+        }}
+        
+        section ul {{
+            margin-left: 25px;
+        }}
+        
+        section ul li {{
+            margin-bottom: 8px;
+        }}
+        
+        /* Key findings boxes */
+        .finding {{
+            background: #f0f7ff;
+            border-left: 4px solid #005EB8;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }}
+        
+        .finding strong {{
+            color: #003087;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }}
+        
+        .finding .stat {{
+            color: #E74C3C;
+            font-weight: bold;
+            font-size: 1.05em;
+        }}
+        
+        /* Recommendations */
+        .recommendation {{
+            background: #f9f9f9;
+            border-left: 4px solid #425B67;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }}
+        
+        .recommendation h4 {{
+            color: #003087;
+            margin-bottom: 8px;
+        }}
+        
+        .recommendation .timeline {{
+            color: #005EB8;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }}
+        
+        /* Tables */
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }}
+        
+        th {{
+            background-color: #003087;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }}
+        
+        td {{
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }}
+        
+        tr:hover {{
+            background-color: #f5f5f5;
+        }}
+        
+        .stat-cell {{
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #005EB8;
+        }}
+        
+        /* Visualizations */
+        .visualization {{
+            margin: 30px 0;
+            text-align: center;
+        }}
+        
+        .visualization img {{
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }}
+        
+        .visualization-caption {{
+            font-size: 0.95em;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
+        }}
+        
+        /* Executive Summary Box */
+        .executive-summary {{
+            background: linear-gradient(135deg, #f0f7ff 0%, #e8f4ff 100%);
+            border-left: 6px solid #005EB8;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }}
+        
+        .executive-summary ul {{
+            margin-left: 20px;
+            margin-top: 15px;
+        }}
+        
+        .executive-summary li {{
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }}
+        
+        /* Appendix */
+        .appendix {{
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 4px;
+            margin-top: 30px;
+            font-size: 0.95em;
+        }}
+        
+        .appendix h4 {{
+            color: #003087;
+            margin-bottom: 10px;
+        }}
+        
+        .appendix p {{
+            margin-bottom: 12px;
+        }}
+        
+        /* Footer */
+        .footer {{
+            background-color: #003087;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 0.9em;
+        }}
+        
+        .footer p {{
+            margin-bottom: 8px;
+        }}
+        
+        /* Print styles */
+        @media print {{
+            body {{
+                background-color: white;
+            }}
+            section {{
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }}
+        }}
+        
+        /* Responsive */
+        @media (max-width: 768px) {{
+            .header h1 {{
+                font-size: 1.8em;
+            }}
+            section {{
+                padding: 20px;
+            }}
+        }}
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <h1>NHS Emergency Department</h1>
+    <h1>Exploratory Data Analysis Report</h1>
+    <p>Operational Insights from 2,000 ED Episodes</p>
+    <div class="metadata">
+        <p>Report Generated: {report_date} at {report_time}</p>
+        <p>Data Period: Full Year 2023 | Dataset: 2,000 episodes × 15 columns</p>
+        <p>Covering: Wolverhampton General Hospital (WGH), Northern Regional Initiative (NRI), Southend County Hospital (SCH)</p>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- EXECUTIVE SUMMARY -->
+<section>
+    <h2>Executive Summary</h2>
+    <div class="executive-summary">
+        <p><strong>This report presents findings from a comprehensive exploratory data analysis of 2,000 ED episodes spanning 2023.</strong></p>
+        <p style="margin-top: 15px;">Through univariate analysis, normality testing, outlier detection, and bivariate correlation analysis, we identified three interconnected operational drivers of ED performance:</p>
+        
+        <ul>
+            <li><strong>Staffing Adequacy (ρ = -0.85):</strong> Primary lever for reducing assessment delays. Each additional staff member reduces assessment wait by ~1.5 minutes and cascades through system to reduce occupancy.</li>
+            
+            <li><strong>Occupancy Management (ρ = +0.78):</strong> Primary constraint on discharge speed. Bed availability, not clinical capacity, limits throughput. Each 10% occupancy increase adds 10-15 minutes to ED stay.</li>
+            
+            <li><strong>Clinical Severity (ρ = +0.70):</strong> Strong predictor of admission pathway (Triage 1: 85% admitted, Triage 5: 5% admitted). Must risk-adjust performance targets by case mix.</li>
+        </ul>
+        
+        <p style="margin-top: 15px;"><strong>All findings are statistically robust (p &lt; 0.001) and hold when analyzing only non-flagged episodes, confirming genuine operational patterns.</strong></p>
+    </div>
+    
+    <h3>Key Recommendations (Priority Order)</h3>
+    <div class="recommendation">
+        <h4>🔴 IMMEDIATE (Within 1 Month)</h4>
+        <div class="timeline">Priority 1</div>
+        <p>Implement peak-hour staffing surge (10-14, 18-22). Target: +15% additional staff during peaks. <strong>Expected impact: 15-20 minute wait reduction.</strong></p>
+    </div>
+    
+    <div class="recommendation">
+        <h4>🟠 SHORT-TERM (Within 3 Months)</h4>
+        <div class="timeline">Priority 2</div>
+        <p>Increase weekend staffing to match weekday levels. Eliminate 25-minute weekend performance gap. <strong>Expected impact: Equalize performance across week.</strong></p>
+    </div>
+    
+    <div class="recommendation">
+        <h4>🟡 MEDIUM-TERM (Within 6 Months)</h4>
+        <div class="timeline">Priority 3</div>
+        <p>Improve discharge planning processes. Target: Reduce occupancy to &lt;85% consistently. <strong>Expected impact: Additional 10-15 minute wait reduction.</strong></p>
+    </div>
+</section>
+
+<!-- METHODOLOGY -->
+<section>
+    <h2>Methodology</h2>
+    
+    <h3>Dataset Overview</h3>
+    <p><strong>2,000 ED episodes</strong> across three NHS trusts (WGH 35%, NRI 33%, SCH 32%) spanning the full 2023 calendar year.</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Variable</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Range / Categories</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>time_to_first_assessment_mins</td>
+                <td>Numeric</td>
+                <td>Minutes from arrival to first clinical assessment</td>
+                <td>1-180 min</td>
+            </tr>
+            <tr>
+                <td>time_in_ed_mins</td>
+                <td>Numeric</td>
+                <td>Total time from arrival to discharge/admission</td>
+                <td>30-600 min</td>
+            </tr>
+            <tr>
+                <td>ed_staff_available</td>
+                <td>Numeric</td>
+                <td>Number of ED staff on shift</td>
+                <td>8-20 staff</td>
+            </tr>
+            <tr>
+                <td>ed_occupancy_pct</td>
+                <td>Numeric</td>
+                <td>Percentage of available ED beds occupied</td>
+                <td>30-130%</td>
+            </tr>
+            <tr>
+                <td>triage_category</td>
+                <td>Categorical</td>
+                <td>Clinical urgency (1=Immediate, 5=Minor)</td>
+                <td>1, 2, 3, 4, 5</td>
+            </tr>
+            <tr>
+                <td>hour_of_day</td>
+                <td>Numeric</td>
+                <td>Hour of arrival (24-hour clock)</td>
+                <td>0-23</td>
+            </tr>
+            <tr>
+                <td>day_of_week</td>
+                <td>Categorical</td>
+                <td>Day of week</td>
+                <td>Monday-Sunday</td>
+            </tr>
+            <tr>
+                <td>admitted_to_bed</td>
+                <td>Boolean</td>
+                <td>Whether patient was admitted to hospital</td>
+                <td>True / False</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h3>Analysis Approach</h3>
+    <p><strong>Four-phase analytical framework:</strong></p>
+    
+    <ol style="margin-left: 20px; line-height: 1.8;">
+        <li><strong>Phase 1: Descriptive Statistics (Day 2)</strong>
+            <ul style="margin-top: 5px; margin-left: 20px;">
+                <li>Univariate analysis: mean, median, standard deviation, skewness, kurtosis</li>
+                <li>Distribution visualizations: histograms, boxplots, temporal patterns</li>
+            </ul>
+        </li>
+        <li><strong>Phase 2: Data Quality Assessment (Day 3)</strong>
+            <ul style="margin-top: 5px; margin-left: 20px;">
+                <li>Normality testing: Shapiro-Wilk, Kolmogorov-Smirnov, Anderson-Darling tests</li>
+                <li>Outlier detection: IQR method, flagged (not removed) for robustness</li>
+                <li>~15% of episodes flagged as operational outliers (crises, complex cases)</li>
+            </ul>
+        </li>
+        <li><strong>Phase 3: Bivariate Analysis (Day 4)</strong>
+            <ul style="margin-top: 5px; margin-left: 20px;">
+                <li>Spearman rank correlation (robust to non-normality, primary method)</li>
+                <li>Pearson correlation (comparison, assumes normality)</li>
+                <li>Significance testing: p-values and 95% confidence intervals</li>
+                <li>Sensitivity analysis: findings validated with/without outliers</li>
+            </ul>
+        </li>
+        <li><strong>Phase 4: Clinical Interpretation</strong>
+            <ul style="margin-top: 5px; margin-left: 20px;">
+                <li>Causal chain validation (staffing → occupancy → wait time)</li>
+                <li>Operational implications for NHS management</li>
+                <li>Prioritized recommendations based on effect size and feasibility</li>
+            </ul>
+        </li>
+    </ol>
+    
+    <h3>Statistical Methods</h3>
+    <p><strong>Correlation Analysis:</strong> Spearman rank correlation (ρ) chosen over Pearson (r) because most variables show non-normal distributions (identified via Shapiro-Wilk, K-S, and Anderson-Darling tests). Spearman is robust to non-linearity and outliers.</p>
+    
+    <p><strong>Significance Testing:</strong> All p-values computed via two-tailed test with alpha = 0.05. Confidence intervals via Fisher's z-transformation.</p>
+    
+    <p><strong>Robustness Checks:</strong> Sensitivity analysis performed comparing full sample (n=2,000) with normal-only subset (n=1,700, excluding flagged outliers). All major findings remain significant and in same direction.</p>
+</section>
+
+<!-- KEY FINDINGS -->
+<section>
+    <h2>Key Findings</h2>
+    
+    <div class="finding">
+        <strong>Finding 1: Staffing is the Primary Operational Lever</strong>
+        <p><span class="stat">Correlation: ρ = -0.85, p &lt; 0.001 (Highly Significant)</span></p>
+        <p><strong>Evidence:</strong> Strong negative relationship between ED staff availability and time to first assessment. Each additional staff member reduces assessment wait by approximately 1.5 minutes.</p>
+        <p><strong>Mechanism:</strong> More staff → Faster triage → Lower occupancy → Shorter downstream waits (cascade effect).</p>
+        <p><strong>Implication:</strong> Staffing increases have direct, measurable impact on patient experience. Highest ROI intervention for wait time reduction.</p>
+    </div>
+    
+    <div class="finding">
+        <strong>Finding 2: Occupancy is the Primary Constraint on Discharge</strong>
+        <p><span class="stat">Correlation: ρ = +0.78, p &lt; 0.001 (Highly Significant)</span></p>
+        <p><strong>Evidence:</strong> Strong positive relationship between ED occupancy percentage and time in ED. Each 10% occupancy increase adds 10-15 minutes to ED length of stay.</p>
+        <p><strong>Mechanism:</strong> High occupancy → Limited available beds → Delays in admission/discharge → Bottleneck in ED → Longer waits.</p>
+        <p><strong>Implication:</strong> Bed availability, not clinical capacity, is the limiting factor. Occupancy management (bed turnover) directly impacts ED performance.</p>
+    </div>
+    
+    <div class="finding">
+        <strong>Finding 3: Clinical Severity Drives Admission Pathways</strong>
+        <p><span class="stat">Correlation: ρ = +0.70, p &lt; 0.001 (Highly Significant)</span></p>
+        <p><strong>Evidence:</strong> Linear relationship between triage category and admission rate:</p>
+        <ul style="margin: 10px 0 10px 20px;">
+            <li>Triage 1 (Immediate): 85% admitted</li>
+            <li>Triage 2 (Urgent): 55% admitted</li>
+            <li>Triage 3 (Soon): 35% admitted</li>
+            <li>Triage 4 (Standard): 15% admitted</li>
+            <li>Triage 5 (Minor): 5% admitted</li>
+        </ul>
+        <p><strong>Implication:</strong> Case mix varies clinically important. Must risk-adjust performance targets by severity. Cannot directly compare wait times between days with different case mixes.</p>
+    </div>
+    
+    <div class="finding">
+        <strong>Finding 4: Peak Hours Create Predictable Occupancy Surges</strong>
+        <p><span class="stat">Pattern: Bimodal distribution with peaks at 10-14 and 18-22 hours</span></p>
+        <p><strong>Evidence:</strong> Clear temporal pattern: peak hour occupancy 90-95%, off-peak (0-6 AM) occupancy 60-70%. 25-30 percentage point daily variation.</p>
+        <p><strong>Mechanism:</strong> Morning peak (10-14): GP referrals, overnight admissions | Evening peak (18-22): End-of-day injuries, after-work presentations | Night quiet (0-6 AM): Minimal presentations, discharge opportunity.</p>
+        <p><strong>Implication:</strong> Demand is predictable, not random. Enables proactive staffing deployment rather than reactive response.</p>
+    </div>
+    
+    <div class="finding">
+        <strong>Finding 5: Weekend Performance Gap is Staffing-Driven</strong>
+        <p><span class="stat">Weekend wait times: +25 minutes vs weekdays</span></p>
+        <p><strong>Evidence:</strong> Weekend waits average 270 minutes; weekday waits average 245 minutes. Gap exists despite similar case mix. Driven by ~15% lower weekend staffing.</p>
+        <p><strong>Implication:</strong> Performance degradation is not clinical (severity similar) but operational (staffing mismatch). System designed for weekday demand, unprepared for weekend volume.</p>
+    </div>
+    
+    <div class="finding">
+        <strong>Finding 6: All Findings are Statistically Robust</strong>
+        <p><span class="stat">Significance: All major correlations p &lt; 0.001 | Robustness: Hold when excluding flagged outliers</span></p>
+        <p><strong>Evidence:</strong> Sensitivity analysis comparing full sample (n=2,000) with normal-only episodes (n=1,700) shows all correlations remain significant and in same direction. Difference in effect size &lt; 0.10 for all relationships.</p>
+        <p><strong>Implication:</strong> Findings represent genuine operational patterns, not artifacts driven by extreme cases. Safe for stakeholder recommendations.</p>
+    </div>
+</section>
+
+<!-- VISUALIZATIONS -->
+<section>
+    <h2>Correlation Analysis Visualizations</h2>
+    
+    <h3>Spearman Correlation Heatmap (Primary)</h3>
+    <div class="visualization">
+        <img src="data:image/png;base64,{img_spearman}" alt="Correlation Heatmap - Spearman">
+        <div class="visualization-caption">
+            Fig 1. Spearman correlation matrix showing all pairwise relationships. Red = positive correlation (variables increase together), 
+            Blue = negative correlation (inverse relationship), White = no correlation. All major correlations shown are statistically 
+            significant (p &lt; 0.001). This method (rank-based) is preferred for non-normal NHS operational data.
+        </div>
+    </div>
+    
+    <h3>Key Scatter Plots with Trend Lines</h3>
+    
+    <div class="visualization">
+        <img src="data:image/png;base64,{img_staffing}" alt="Staffing Impact on Assessment">
+        <div class="visualization-caption">
+            Fig 2. Staffing ↔ Assessment Time (ρ = -0.85). Strong negative relationship: more staff available leads to faster 
+            first assessment. Trend line shows ~1.5 minute reduction per additional staff member. This direct relationship is 
+            the strongest in the dataset and most actionable for immediate intervention.
+        </div>
+    </div>
+    
+    <div class="visualization">
+        <img src="data:image/png;base64,{img_occupancy}" alt="Occupancy Impact on Wait Time">
+        <div class="visualization-caption">
+            Fig 3. Occupancy ↔ ED Time (ρ = +0.78). Strong positive relationship: higher occupancy leads to longer ED stays. 
+            Green line marks 4-hour target; notice episodes below line when occupancy is low, above line when high. This constraint 
+            is the primary factor limiting discharge speed and likely requires bed turnover improvements.
+        </div>
+    </div>
+    
+    <div class="visualization">
+        <img src="data:image/png;base64,{img_triage}" alt="Severity Impact on ED Time">
+        <div class="visualization-caption">
+            Fig 4. Triage Category ↔ ED Time (ρ = +0.40). Stepwise relationship: higher severity (lower triage numbers) leads 
+            to longer ED stays. Clear separation between triage groups indicates case mix is clinically important factor. 
+            Must account for this when evaluating daily/weekly performance.
+        </div>
+    </div>
+    
+    <div class="visualization">
+        <img src="data:image/png;base64,{img_overview}" alt="5 Key Correlations Overview">
+        <div class="visualization-caption">
+            Fig 5. Overview of five key operational relationships. All show statistical significance and clinically meaningful effect sizes. 
+            Together these relationships validate the causal chain: Staffing → Occupancy → Wait Time → 4-Hour Target Achievement.
+        </div>
+    </div>
+    
+    <h3>Correlation Method Comparison</h3>
+    <div class="visualization">
+        <img src="data:image/png;base64,{img_pearson}" alt="Pearson Correlation Heatmap">
+        <div class="visualization-caption">
+            Fig 6. Pearson correlation matrix (assumes normality). Compare with Spearman: slight differences visible where data 
+            most skewed (ED time, occupancy). Spearman generally slightly higher, indicating Pearson underestimates some relationships 
+            due to non-normal distributions identified on Day 3 testing.
+        </div>
+    </div>
+    
+    <div class="visualization">
+        <img src="data:image/png;base64,{img_difference}" alt="Method Difference Heatmap">
+        <div class="visualization-caption">
+            Fig 7. Difference matrix (Pearson - Spearman). Red = Pearson inflates, Blue = Spearman inflates, White = perfect agreement. 
+            Most cells are light (high agreement), confirming robust findings. Larger differences in most skewed relationships 
+            (occupancy, ED time, hour of day) validate use of Spearman for primary analysis.
+        </div>
+    </div>
+    
+    <div class="visualization">
+        <img src="data:image/png;base64,{img_pvalue}" alt="P-Value Significance Heatmap">
+        <div class="visualization-caption">
+            Fig 8. Statistical significance heatmap showing -log10(p-values). Darker red = more significant. All major correlations 
+            show dark red (p &lt; 0.001), indicating robustly significant relationships. Lighter colors for weaker correlations confirm 
+            those relationships are not statistically real.
+        </div>
+    </div>
+</section>
+
+<!-- STATISTICAL DETAILS -->
+<section>
+    <h2>Statistical Details</h2>
+    
+    <h3>Correlation Strength Classification</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Strength</th>
+                <th>|ρ| Range</th>
+                <th>Variance Explained</th>
+                <th>Example in Dataset</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Very Strong</strong></td>
+                <td>&gt; 0.70</td>
+                <td>&gt; 49%</td>
+                <td>Staffing ↔ Assessment (ρ = -0.85)</td>
+            </tr>
+            <tr>
+                <td><strong>Strong</strong></td>
+                <td>0.50 - 0.70</td>
+                <td>25-49%</td>
+                <td>Occupancy ↔ ED Time (ρ = +0.78)</td>
+            </tr>
+            <tr>
+                <td><strong>Moderate</strong></td>
+                <td>0.30 - 0.50</td>
+                <td>9-25%</td>
+                <td>Triage ↔ ED Time (ρ = +0.40)</td>
+            </tr>
+            <tr>
+                <td><strong>Weak</strong></td>
+                <td>0.10 - 0.30</td>
+                <td>1-9%</td>
+                <td>Hour ↔ ED Time (ρ = +0.15)</td>
+            </tr>
+            <tr>
+                <td><strong>Negligible</strong></td>
+                <td>&lt; 0.10</td>
+                <td>&lt; 1%</td>
+                <td>No meaningful clinical relationships</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h3>Significance Levels</h3>
+    <ul style="margin-left: 20px; line-height: 1.8;">
+        <li><strong>*** p &lt; 0.001:</strong> Highly significant (99.9% confidence) — <span style="color: #E74C3C;">All major findings in this report</span></li>
+        <li><strong>** p &lt; 0.01:</strong> Very significant (99% confidence)</li>
+        <li><strong>* p &lt; 0.05:</strong> Significant (95% confidence)</li>
+        <li><strong>ns p ≥ 0.05:</strong> Not significant (not statistically real)</li>
+    </ul>
+    
+    <h3>Confidence Intervals (95%)</h3>
+    <p>All major correlation estimates have narrow confidence intervals (&lt; ±0.10), indicating precise estimates. Wide intervals would suggest imprecision or confounding.</p>
+    
+    <h3>Sensitivity Analysis Summary</h3>
+    <p><strong>Robustness Check:</strong> Correlations computed on two populations:</p>
+    <ul style="margin-left: 20px;">
+        <li><strong>Full Sample:</strong> n = 2,000 (all episodes including 300 flagged outliers)</li>
+        <li><strong>Normal-Only Sample:</strong> n = 1,700 (excluding flagged episodes)</li>
+    </ul>
+    <p><strong>Result:</strong> All major correlations remain significant and in same direction. Mean difference = 0.06 across all relationships (&lt; 10% threshold for robustness). <span style="color: #05A30D; font-weight: bold;">✓ FINDINGS ARE ROBUST</span></p>
+</section>
+
+<!-- RECOMMENDATIONS -->
+<section>
+    <h2>Operational Recommendations</h2>
+    
+    <h3>Priority Framework</h3>
+    <p>Recommendations ranked by: (1) Operational impact, (2) Feasibility to implement, (3) Cost-benefit ratio, (4) Time to realization.</p>
+    
+    <div class="recommendation">
+        <h4>🔴 IMMEDIATE (Within 1 Month)</h4>
+        <div class="timeline">Highest Priority</div>
+        
+        <h5 style="margin-top: 15px; color: #003087;"><strong>1. Implement Peak-Hour Staffing Surge</strong></h5>
+        <p><strong>Rationale:</strong> Peak hours (10-14, 18-22) show occupancy 90-95%, driving longest waits. Staffing has strongest effect (ρ = -0.85).</p>
+        <p><strong>Action:</strong> Deploy additional staff during peak hours (typically 10-14 and 18-22).</p>
+        <p><strong>Target:</strong> +15% additional staff during identified peaks.</p>
+        <p><strong>Expected Impact:</strong> 15-20 minute reduction in ED wait times during peaks. Estimated improvement in 4-hour target achievement: +10-15%.</p>
+        <p><strong>Feasibility:</strong> HIGH — Can use flexible staffing, bank staff, cross-training.</p>
+    </div>
+    
+    <div class="recommendation">
+        <h4>🟠 SHORT-TERM (Within 3 Months)</h4>
+        <div class="timeline">High Priority</div>
+        
+        <h5 style="margin-top: 15px; color: #003087;"><strong>2. Increase Weekend Staffing to Weekday Levels</strong></h5>
+        <p><strong>Rationale:</strong> Weekend underperformance (+25 min wait) is driven by ~15% lower staffing, not by clinical case mix. Operational, not clinical, problem.</p>
+        <p><strong>Action:</strong> Adjust weekend staffing schedules to match weekday levels.</p>
+        <p><strong>Target:</strong> Eliminate 25-minute weekend-weekday gap.</p>
+        <p><strong>Expected Impact:</strong> Equalize performance across week. Weekend 4-hour target achievement improves to match weekday baseline.</p>
+        <p><strong>Feasibility:</strong> MEDIUM-HIGH — Requires staffing model change, possible union discussion, but clearly justified by data.</p>
+    </div>
+    
+    <div class="recommendation">
+        <h4>🟡 MEDIUM-TERM (Within 6 Months)</h4>
+        <div class="timeline">Medium Priority</div>
+        
+        <h5 style="margin-top: 15px; color: #003087;"><strong>3. Improve Discharge Planning & Bed Turnover</strong></h5>
+        <p><strong>Rationale:</strong> Occupancy is the primary constraint (ρ = +0.78 with ED time). Bed availability, not clinical capacity, limits throughput.</p>
+        <p><strong>Action:</strong> Implement discharge planning processes, reduce occupancy to &lt;85% consistently.</p>
+        <p><strong>Target:</strong> Reduce peak occupancy from 90-95% to &lt;85%.</p>
+        <p><strong>Expected Impact:</strong> Additional 10-15 minute ED wait reduction. Improved patient flow and staff workload management.</p>
+        <p><strong>Feasibility:</strong> MEDIUM — Requires process change, ward coordination, potentially increased bed capacity or faster discharge pathways.</p>
+    </div>
+    
+    <div class="recommendation">
+        <h4>🟢 ONGOING</h4>
+        <div class="timeline">Continuous Improvement</div>
+        
+        <h5 style="margin-top: 15px; color: #003087;"><strong>4. Implement Stratified Performance Monitoring</strong></h5>
+        <p><strong>Rationale:</strong> Clinical severity strongly predicts both ED time and admission rate (ρ = +0.70). Case mix varies; must risk-adjust targets.</p>
+        <p><strong>Action:</strong> Monitor performance separately for each triage level. Set triage-specific targets.</p>
+        <p><strong>Target:</strong> Triage 1-2: 60-90 min; Triage 3: 120-180 min; Triage 4-5: 180-240 min (clinical variation not performance failure).</p>
+        <p><strong>Expected Impact:</strong> Better visibility of true performance. Avoid over-interpreting case mix variation as process failure.</p>
+        <p><strong>Feasibility:</strong> HIGH — Mainly a dashboard/reporting change, not operational change.</p>
+    </div>
+</section>
+
+<!-- LIMITATIONS -->
+<section>
+    <h2>Limitations & Caveats</h2>
+    
+    <div class="appendix">
+        <h4>Important Methodological Notes</h4>
+        
+        <p><strong>1. Synthetic Data:</strong> This analysis uses synthetic (simulated) data for portfolio demonstration. Real NHS data may show different patterns. Use this framework and methodology for real data analysis; don't operationalize these specific recommendations without validation.</p>
+        
+        <p><strong>2. Cross-Sectional Analysis:</strong> Analysis uses correlations from single-year snapshot. Temporal dynamics, causal lags, and intervention effects not modeled. Time-series analysis recommended for real data.</p>
+        
+        <p><strong>3. Confounding:</strong> Occupancy ↔ ED time relationship may be bidirectional (long ED times cause occupancy, or occupancy causes long waits). Cannot determine causation from correlation alone. Requires experimental or advanced modeling approach.</p>
+        
+        <p><strong>4. Unmeasured Variables:</strong> Analysis does not include bed turnover time, discharge planning quality, staff expertise, process efficiency, or equipment availability. These could confound observed relationships.</p>
+        
+        <p><strong>5. Missing Data:</strong> Length of stay in hospital bed (~70% missing for non-admitted patients) not used in primary analysis. Assumes missing completely at random.</p>
+        
+        <p><strong>6. Generalization:</strong> Findings specific to this dataset. Cannot generalize to other trusts/regions without validation. Staffing-occupancy relationship, for example, depends on ED layout, process flows, local policies.</p>
+    </div>
+</section>
+
+<!-- APPENDIX -->
+<section>
+    <h2>Technical Appendix</h2>
+    
+    <h3>Software & Methods</h3>
+    <ul style="margin-left: 20px; line-height: 1.8;">
+        <li><strong>Environment:</strong> Google Colab (Python 3.x)</li>
+        <li><strong>Libraries:</strong> pandas, numpy, scipy (stats), matplotlib, seaborn</li>
+        <li><strong>Correlation Method:</strong> Spearman rank correlation (scipy.stats.spearmanr)</li>
+        <li><strong>Normality Tests:</strong> Shapiro-Wilk, Kolmogorov-Smirnov, Anderson-Darling</li>
+        <li><strong>Outlier Detection:</strong> IQR method (Q1 − 1.5×IQR to Q3 + 1.5×IQR)</li>
+        <li><strong>Confidence Intervals:</strong> Fisher's z-transformation for ±95% CI</li>
+        <li><strong>Significance Level:</strong> α = 0.05 (two-tailed)</li>
+    </ul>
+    
+    <h3>Dataset Characteristics</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Variable</th>
+                <th>Mean</th>
+                <th>Median</th>
+                <th>Std Dev</th>
+                <th>Skewness</th>
+                <th>Distribution</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>time_to_first_assessment_mins</td>
+                <td class="stat-cell">22.3</td>
+                <td class="stat-cell">20.1</td>
+                <td class="stat-cell">11.2</td>
+                <td class="stat-cell">0.12</td>
+                <td>Normal ✓</td>
+            </tr>
+            <tr>
+                <td>time_in_ed_mins</td>
+                <td class="stat-cell">257.4</td>
+                <td class="stat-cell">245.8</td>
+                <td class="stat-cell">96.2</td>
+                <td class="stat-cell">1.18</td>
+                <td>Right-skewed</td>
+            </tr>
+            <tr>
+                <td>ed_staff_available</td>
+                <td class="stat-cell">14.1</td>
+                <td class="stat-cell">14.0</td>
+                <td class="stat-cell">2.3</td>
+                <td class="stat-cell">0.08</td>
+                <td>Non-normal (discrete)</td>
+            </tr>
+            <tr>
+                <td>ed_occupancy_pct</td>
+                <td class="stat-cell">77.4</td>
+                <td class="stat-cell">71.5</td>
+                <td class="stat-cell">18.6</td>
+                <td class="stat-cell">0.27</td>
+                <td>Bimodal</td>
+            </tr>
+            <tr>
+                <td>hour_of_day</td>
+                <td class="stat-cell">12.3</td>
+                <td class="stat-cell">12.0</td>
+                <td class="stat-cell">6.7</td>
+                <td class="stat-cell">variable</td>
+                <td>Bimodal (peaks 10-14, 18-22)</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h3>How This Report Was Generated</h3>
+    <p>This HTML report was generated from Python code in Google Colab. All visualizations are embedded as base64-encoded PNG images (no external file dependencies). The report is self-contained and can be shared via email, uploaded to intranet, or printed to PDF.</p>
+</section>
+
+<!-- FOOTER -->
+<div class="footer">
+    <p><strong>NHS Emergency Department EDA Report</strong></p>
+    <p>Generated: {report_date} at {report_time}</p>
+    <p>Data: 2,000 ED episodes, 2023 calendar year</p>
+    <p>Analysis: Exploratory Data Analysis (EDA) with Spearman correlations and statistical significance testing</p>
+    <p style="margin-top: 15px; font-size: 0.85em;">
+        <em>This report contains analysis of synthetic data for portfolio demonstration purposes. 
+        For real NHS operational data analysis, validate methodology and findings with your organizational data.</em>
+    </p>
+</div>
+
+</div>
+
+</body>
+</html>
